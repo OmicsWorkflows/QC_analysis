@@ -1,0 +1,161 @@
+import timsrust_pyo3
+import opentims_bruker_bridge
+from opentimspy.opentims import OpenTIMS
+import pathlib
+import pandas as pd
+import datetime
+import sys, os, ast
+import psutil
+from datetime import datetime
+
+input = 'C:/Users/435328/Documents/QC workflow/data/'
+file = '6087_BRIMS3_DIA2_RSLC_2col-108min_TFA_56_2_BE2_1_18895.d'
+sys_info_output = 'C:/Users/435328/Documents/QC workflow/timsRustInfoContinuousSaving2.csv'
+path = 'C:/Users/435328/Documents/QC workflow/data/6087_BRIMS3_DIA2_RSLC_2col-108min_TFA_56_2_BE2_1_18895.d'
+qc_path = 'C:/Users/435328/Documents/QC workflow/ref_matrix.csv'
+msn = 'MS'
+output = 'C:/Users/435328/Documents/QC workflow/'
+qc_output = output
+qc_only = False
+
+def writeSysInfo(file, process):
+    cpu = psutil.cpu_percent()
+    mem = psutil.virtual_memory()
+    df = pd.DataFrame(
+        {'process': process,
+         'CPU.perc': cpu,
+         'RAM.used': mem.used,
+         'RAM.free': mem.free,
+         'RAM.perc': mem.percent,
+         'time': datetime.today().isoformat()
+        }, index=[0])
+    if os.path.isfile(file):
+        df.to_csv(file, mode = 'a', header = False, index = False)
+    else:
+        df.to_csv(file, index = False)
+
+def writeTicCsv(rt, intensity, time, filename):
+    df = pd.DataFrame(
+        {'RT': rt,
+         'intensity': intensity,
+         'time': time
+        })
+    df.to_csv(filename, index = False)
+
+def getFileTime(f):
+    f_path = pathlib.Path(f)
+    D = OpenTIMS(f_path)
+
+    try:
+        import opentims_bruker_bridge
+        
+        metadict = D.table2dict('GlobalMetadata')
+        k = metadict['Key'].tolist()
+        v = metadict['Value'].tolist()
+        date_raw = v[k.index('AcquisitionDateTime')]
+        date_list = datetime.fromisoformat(date_raw)
+        date_final = date_list.strftime('%Y-%m-%d %H:%M:%S')
+        
+        return(date_final)
+    
+    except ModuleNotFoundError:
+        print('opentims_bruker_bridge not found')
+
+
+def getQCpeptide(f, all_frames, m_list, output):
+    reader = timsrust_pyo3.TimsReader(f)
+    writeSysInfo(sys_info_output, 'file read for QC peptide calculation')
+
+    for x in range(0, len(all_frames)):
+        tmp = all_frames[x]
+        if tmp.frame_type == 0:
+            rt = tmp.rt/60
+            mzs = reader.resolve_mzs(tmp.tof_indices)
+            for m_i in range(0, len(m_list)):
+                tmp_mz = m_list[m_i]
+                try:
+                    index = [i for i, j in enumerate(mzs) if (j > tmp_mz-0.015) and (j < tmp_mz+0.015)]
+                    selected_ints = [tmp.intensities[k] for k in index]
+                    int = (sum(selected_ints))
+                    writeSysInfo(sys_info_output, 'calculating QC peptides')
+                except ValueError:
+                    int = 0
+                    writeSysInfo(sys_info_output, 'calculating QC peptides, 0 found')
+                
+                output_df = pd.DataFrame(
+                    {'mz': tmp_mz,
+                    'rt': rt,
+                    'intensity': int,
+                    'matrix_correlation': 'NA',
+                    'peak_start': 'NA',
+                    'peak_end': 'NA',
+                    'peak_x': 'NA',
+                    'baseline': 'NA'
+                    }, index=[0])
+
+                if os.path.isfile(output):
+                    output_df.to_csv(output, mode = 'a', header = False, index = False)
+                else:
+                    output_df.to_csv(output, index = False)
+                writeSysInfo(sys_info_output, 'QC peptides saved')
+
+def readQCpeptides(file, matrix, frames, output):
+    read = pd.read_csv(matrix)
+    df = read[['id', 'precursor.mz']]
+    df = df.drop_duplicates()
+
+    mz_list = df['precursor.mz'].tolist()
+
+    getQCpeptide(file, frames, mz_list, output)
+
+def readRawBrukerTims(input, file, msn, qc_path, output, qc_output, qc_only):
+    writeSysInfo(sys_info_output, 'start')
+
+    path = input+file
+    time = getFileTime(path)
+    sample = file.replace('.d', '')
+    fn = output+sample+'.csv'
+    
+    all_frames = timsrust_pyo3.read_all_frames(path)
+    writeSysInfo(sys_info_output, 'frames read')
+
+    if not qc_only:
+        if msn == 'MS':
+            ft = [0]
+        elif msn == 'MS2':
+            ft = [1, 2]
+
+        rt = []
+        intensity = []
+
+        for i in range(0, len(all_frames)):
+            writeSysInfo(sys_info_output, 'calculating TIC')
+            tmp = all_frames[i]
+            if tmp.frame_type in ft:
+                rt.append(tmp.rt/60)
+                intensity.append(sum(tmp.intensities))
+
+        writeTicCsv(rt, intensity, time, fn)
+    
+    writeSysInfo(sys_info_output, 'TIC saved')
+
+    if qc_path != '':
+        qc_fn = qc_output+sample+'.csv'
+        readQCpeptides(path, qc_path, all_frames, qc_fn)
+
+if __name__ == '__main__':
+    input = sys.argv[1]
+    file = sys.argv[2]
+    msn = sys.argv[3]
+    qc_path = sys.argv[4]
+    output = sys.argv[5]
+    qc_output = sys.argv[6]
+    qc_only = ast.literal_eval(sys.argv[7])
+
+    try:
+        readRawBrukerTims(input, file, msn, qc_path, output, qc_output, qc_only)
+        print('ok')
+    except:
+        print('error')
+
+readRawBrukerTims(input, file, msn, qc_path, output, qc_output, qc_only)

@@ -1,0 +1,38 @@
+Moved                   Moved to package 'gginnards'
+coef.lmodel2            Extract Model Coefficients
+confint.lmodel2         Confidence Intervals for Model Parameters
+find_peaks              Find local maxima or global maximum (peaks)
+ggpmisc-package         ggpmisc: Miscellaneous Extensions to 'ggplot2'
+keep_tidy               Tidy, glance or augment an object keeping a
+                        trace of its origin
+outcome2factor          Convert numeric ternary outcomes into a factor
+predict.lmodel2         Model Predictions
+scale_colour_logFC      Colour and fill scales for log fold change data
+scale_colour_outcome    Colour and fill scales for ternary outcomes
+scale_shape_outcome     Shape scale for ternary outcomes
+scale_x_logFC           Position scales for log fold change data
+scale_y_Pvalue          Convenience scale for P-values
+stat_correlation        Annotate plot with correlation test
+stat_fit_augment        Augment data with fitted values and statistics
+stat_fit_deviations     Residuals from model fit as segments
+stat_fit_glance         One row summary data frame for a fitted model
+stat_fit_residuals      Residuals from a model fit
+stat_fit_tb             Model-fit summary or ANOVA
+stat_fit_tidy           One row data frame with fitted parameter
+                        estimates
+stat_ma_eq              Equation, p-value, R^2 of major axis regression
+stat_ma_line            Predicted line from major axis linear fit
+stat_multcomp           Labels for multiple comparisons
+stat_peaks              Local maxima (peaks) or minima (valleys)
+stat_poly_eq            Equation, p-value, R^2, AIC and BIC of fitted
+                        polynomial
+stat_poly_line          Predicted line from linear model fit
+stat_quant_band         Predicted band from quantile regression fits
+stat_quant_eq           Equation, rho, AIC and BIC from quantile
+                        regression
+stat_quant_line         Predicted line from quantile regression fit
+swap_xy                 Swap x and y in a formula
+symmetric_limits        Expand a range to make it symmetric
+use_label               Assemble label and map it
+xy_outcomes2factor      Convert two numeric ternary outcomes into a
+                        factor

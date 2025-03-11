@@ -1,0 +1,7 @@
+exportPattern("^[[:alpha:]]+")
+import(IDSL.MXP)
+import(parallel)
+import(stats)
+import(graphics)
+importFrom("grDevices", "dev.off", "png", "rainbow")
+importFrom("utils", "setTxtProgressBar", "txtProgressBar", "write.csv")

@@ -1,0 +1,35 @@
+FILE INFORMATION
+batch name: 
+file format: .raw
+prefix to remove: 
+suffix to remove: 
+
+FILE LOCATIONS
+input: "D:\MSData\data_2025\"
+output: "D:\Desktop\QC_analysis\outputs\"
+calibration output: NA
+QC reference matrix: NA
+
+PROCESSING SETTINGS
+reprocess raw files (Y/N): N
+overwrite existing outputs (Y/N): N
+wait time between loops (min): Inf		# put Inf for no looping
+time offset (min): 0
+MS levels: MS = ms, MS2 = ms2
+date format: %Y-%m-%d %H:%M:%S
+
+CALIBRATION # unless you want to use a specific calibration tag, leave at 'default'
+use calibration (Y/N): N
+tag: default
+method: default
+
+QC PEPTIDES
+analyze QC peptides (Y/N): N
+reprocess QC peptide data (Y/N): N
+identify QC peptides (Y/N): N
+
+PLOT SETTINGS
+max columns: 2
+max samples in overlay plot: 8
+max samples in bar plots: 50
+TIC fluctuation threshold: 10

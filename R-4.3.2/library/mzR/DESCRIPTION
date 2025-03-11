@@ -1,0 +1,42 @@
+Package: mzR
+Type: Package
+Title: parser for netCDF, mzXML, mzData and mzML and mzIdentML files
+        (mass spectrometry data)
+Version: 2.36.0
+Author: Bernd Fischer, Steffen Neumann, Laurent Gatto, Qiang Kou, Johannes Rainer
+Authors@R: c(
+    person("Steffen", "Neumann", email="sneumann@ipb-halle.de", role=c("aut","cre")),
+    person("Laurent", "Gatto", email="laurent.gatto@uclouvain.be", role=c("aut")),
+    person("Qiakng", "Kou", email="qkou@umail.iu.edu", role=c("aut")),
+    person("David","Rauh",email="drauh@ipb-halle.de", role=c("ctb"))
+    )
+Description: mzR provides a unified API to the common file formats and
+        parsers available for mass spectrometry data. It comes with a
+        subset of the proteowizard library for mzXML, mzML and mzIdentML. The netCDF
+        reading code has previously been used in XCMS.
+License: Artistic-2.0
+LazyLoad: yes
+Depends: R (>= 4.0.0), Rcpp (>= 0.10.1), methods, utils
+Imports: Biobase, BiocGenerics (>= 0.13.6), ProtGenerics (>= 1.17.3),
+        ncdf4
+Suggests: msdata (>= 0.15.1), RUnit, mzID, BiocStyle (>= 2.5.19),
+        knitr, XML, rmarkdown
+VignetteBuilder: knitr
+LinkingTo: Rcpp, Rhdf5lib (>= 1.1.4)
+RcppModules: Pwiz, Ident
+SystemRequirements: C++11, GNU make
+URL: https://github.com/sneumann/mzR/
+BugReports: https://github.com/sneumann/mzR/issues/
+biocViews: ImmunoOncology, Infrastructure, DataImport, Proteomics,
+        Metabolomics, MassSpectrometry
+RoxygenNote: 6.0.1
+git_url: https://git.bioconductor.org/packages/mzR
+git_branch: RELEASE_3_18
+git_last_commit: 1764563
+git_last_commit_date: 2023-10-24
+Date/Publication: 2023-10-24
+NeedsCompilation: yes
+Packaged: 2023-10-25 01:51:23 UTC; biocbuild
+Maintainer: Steffen Neumann <sneumann@ipb-halle.de>
+Built: R 4.3.1; x86_64-w64-mingw32; 2023-10-25 14:27:12 UTC; windows
+Archs: x64

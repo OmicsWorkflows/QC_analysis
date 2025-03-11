@@ -1,0 +1,35 @@
+FILE INFORMATION
+batch name: 
+file format: .csv
+prefix to remove: 
+suffix to remove: _???_1_?????    # e.g., "_???_1_?????" to remove everything following the injection repl.
+
+FILE LOCATIONS
+input: ""					# can be left empty in case of .csv files processing
+output: "E:\Desktop\QC_analysis\outputs\"
+calibration output: NA
+QC reference matrix: E:\Desktop\QC_analysis\input\reference_matrix.csv
+
+PROCESSING SETTINGS
+reprocess raw files (Y/N): n
+overwrite existing outputs (Y/N): Y
+wait time between loops (min): 10 		# put Inf for no looping
+time offset (min): 5
+MS levels: MS = 1, MS2 = 2
+date format: %d. %m. %Y %H:%M:%S
+
+CALIBRATION # unless you want to use a specific calibration tag, leave at 'default'
+use calibration (Y/N): N
+tag: default
+method: default
+
+QC PEPTIDES
+analyze QC peptides (Y/N): Y
+reprocess QC peptide data (Y/N): N
+identify QC peptides (Y/N): N
+
+PLOT SETTINGS
+max columns: 2
+max samples in overlay plot: 8
+max samples in bar plots: 50
+TIC fluctuation threshold: 10

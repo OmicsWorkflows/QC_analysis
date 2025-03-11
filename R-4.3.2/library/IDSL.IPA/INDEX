@@ -1,0 +1,81 @@
+IPA_CompoundsAnnotation
+                        Compound-centric peak annotation
+IPA_GapFiller           IPA GapFiller
+IPA_IonPairing          IPA Ion Pairing
+IPA_MSdeconvoluter      MS deconvoluter
+IPA_PeakAlignment       IPA peak alignment
+IPA_PeakAnalyzer        IPA Peak Analyzer
+IPA_PeaklistAnnotation
+                        IPA Peaklist Annotation
+IPA_aggregate           aggregation method for the IDSL.IPA modules
+IPA_baselineDeveloper   Develop a baseline for the chromatogram using
+                        local minima
+IPA_logRecorder         IPA_logRecorder
+IPA_message             IPA message
+IPA_peak_alignment_folder_xlsxAnalyzer
+                        IPA peak alignment folder xlsxAnalyzer
+IPA_spectraListAggregator
+                        spectraList filtering
+IPA_targeted            IPA Targeted Analysis
+IPA_targeted_xlsxAnalyzer
+                        IPA Targeted xlsxAnalyzer
+IPA_workflow            IPA Workflow
+IPA_xlsxAnalyzer        IPA xlsx Analyzer
+SNRbaseline             SNR baseline
+SNRrms                  SNR RMS
+SNRxcms                 SNR xcms
+XIC                     XIC
+alignedPeakPropertyTableCorrelationListCalculator
+                        Aligned Peak Property Table Correlation List
+                        Calculator
+analyteRetentionTimeCorrector
+                        analyte retention time corrector
+chromatogramMatrix      chromatogram builder for m/z = 263.1678 in
+                        003.d from cord blood sample
+chromatographicPeakAnalysis
+                        Chromatography analysis
+chromatographicPeakDetector
+                        peak detection
+derivative5pointsStencil
+                        Numerical differentiation by five-point stencil
+                        method
+gapFillingCore          Gap-Filling Core Function
+islocalminimum          islocalminimum
+islocaloptimum          islocaloptimum
+loadRdata               loadRdata
+mzClusteringRawXIC      m/z clustering raw XIC
+mzRTindexer             m/z - RT Indexer
+peakAlignmentCore       Peak Alignment Core
+peakAreaCalculator      peak area
+peakAsymmetryFactorCalculator
+                        Asymmetry factor for a chromatographic peak
+peakDerivativeSkewnessCalculator
+                        Peak Derivative Skewness Calculator
+peakFrontingTailingResolver
+                        Fronting and tailing peaks resolver
+peakGaussianityCalculator
+                        Peak Gaussianity Calculator
+peakPropertyTableFreqCalculator
+                        Peak Property Table Frequency Calculator
+peakPropertyTableMedianCalculator
+                        Peak Property Table Median Calculator
+peakPseudomomentsSymmetryCalculator
+                        Peak Pseudomoments Symmetry Calculator
+peakSharpnessCalculator
+                        Peak Sharpness Calculator
+peakUSPtailingFactorCalculator
+                        Peak USP Tailing Factor Calculator
+peakWidthCalculator     peak width measuement
+peakXcolFiller          Peak table producer
+peakXcolFlagger         PeakXcol Flagger
+peak_spline             peak spline
+plot_mz_eic             plot_mz_eic
+plot_simple_tic         plot_simple_tic
+primaryXICdeconvoluter
+                        Primary peak analyzer
+recursiveMZpeaklistCorrector
+                        recursive mass correction
+referenceRetentionTimeDetector
+                        Reference retention time detector
+segment                 segment
+targetedIonPairing      Targeted Ion Pairing

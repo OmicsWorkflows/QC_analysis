@@ -1,0 +1,55 @@
+.checkDllInMonoPath     Check if a file is contained in the environment
+                        variable 'MONO_PATH'.
+.thermofisherlsmsUrl    URL for Thermo Fisher .NET assemblies
+auc.rawrrChromatogram   deriving area under the curve (AUC)
+basePeak                Base peak of a spectrum
+buildRawrrExe           Build 'rawrr.exe' console application.
+dependentScan           Retrieve dependent scan(s) of a scan listed in
+                        scan index
+faimsVoltageOn          Is FAIMS Voltage on?
+filter                  derive scans number which match a specified
+                        filter
+installRawFileReaderDLLs
+                        Download and install the New RawFileReader from
+                        Thermo Fisher Scientific .Net assemblies i
+installRawrrExe         Download and install the 'rawrr.exe' console
+                        application
+is.rawrrChromatogram    Function to check if an object is an instance
+                        of class 'rawrrChromatogram'
+is.rawrrSpectrum        Function to check if an object is an instance
+                        of class 'rawrrSpectrum'
+is.rawrrSpectrumSet     Function to check if an object is an instance
+                        of class 'rawrrSpectrumSet'
+makeAccessor            Make accessor function for key value pair
+                        returned by RawFileReader
+massRange               Acquisition/scan range of spectrum
+masterScan              Retrieve master scan of scan listed in scan
+                        index
+new_rawrrSpectrum       Create instances of class 'rawrrSpectrum'
+plot.rawrrChromatogram
+                        Plot 'rawrrChromatogram' objects
+plot.rawrrChromatogramSet
+                        Plot 'rawrrChromatogramSet' objects
+plot.rawrrSpectrum      Basic plotting function for instances of
+                        'rawrrSpectrum'
+print.rawrrSpectrum     Print method imitate the look and feel of
+                        Thermo Fisher Scientific FreeStyle's output
+rawrrAssemblyPath       Derives the path where all .NET assemblies are
+                        stored.
+rawrrSpectrum           Create 'rawrrSpectrum' objects
+readChromatogram        Extracts chromatographic data from a raw file.
+readFileHeader          read file header Information
+readIndex               Read scan index
+readSpectrum            Reads spectral data from a raw file.
+readTrailer             Read and extract scan trailer from TFS raw
+                        files.
+sampleFilePath          A small file size 'sample.raw' BLOB
+scanNumber              Accessor function for scan number of
+                        'rawrrSpectrum' objects
+summary.rawrrChromatogram
+                        Text summary of chromatogram
+summary.rawrrSpectrum   Basic summary function
+tic                     Total ion current of a spectrum
+validate_rawrrIndex     Validate output of the readIndex function
+validate_rawrrSpectrum
+                        Validate instance of class rawrrSpectrum

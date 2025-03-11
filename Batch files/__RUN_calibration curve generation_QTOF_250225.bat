@@ -1,0 +1,3 @@
+@echo off
+C:\Users\Admin\Desktop\R\R-4.3.2\bin\Rscript.exe "C:\Users\Admin\Desktop\Calibrations and QC analyses\calibrations\scripts\QC_calibration_3.3.3.R" "C:\Users\Admin\Desktop\Calibrations and QC analyses\calibrations\calibration_curve_config_3.3.3.txt" "C:\Users\Admin\Desktop\Calibrations and QC analyses\calibrations\scripts\src\\" "C:\Users\Admin\Desktop\Calibrations and QC analyses\calibrations\log.txt"
+pause

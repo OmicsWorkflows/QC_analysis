@@ -1,0 +1,23 @@
+Metadata-Version: 2.1
+Name: opentimspy
+Version: 1.0.15
+Summary: opentimspy: An open-source parser of Bruker Tims Data File (.tdf).
+Author: Mateusz Krzysztof Łącki (MatteoLacki), Michał Startek (michalsta)
+Author-email: matteo.lacki@gmail.com, michal.startek@mimuw.edu.pl
+Keywords: timsTOFpro,Bruker TDF,data science,mass spectrometry
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Science/Research
+Classifier: Topic :: Scientific/Engineering :: Chemistry
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+License-File: LICENCE
+Requires-Dist: pybind11
+Requires-Dist: numpy
+Provides-Extra: bruker_proprietary
+Requires-Dist: opentims-bruker-bridge (>=1.0.3) ; extra == 'bruker_proprietary'
+Provides-Extra: plotting
+Requires-Dist: matplotlib ; extra == 'plotting'
+
+opentimspy: An open-source parser of Bruker Tims Data File (.tdf).
