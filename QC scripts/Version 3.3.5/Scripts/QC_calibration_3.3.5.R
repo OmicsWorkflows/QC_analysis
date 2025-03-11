@@ -2,8 +2,8 @@
 # Title       : Calibration calculation
 # Description : Creates a calibration curve
 # Author      : Karolina Krystofova
-# Date        : 2025/02/25
-# Version     : 3.3.3
+# Date        : 2025/03/11
+# Version     : 3.3.5
 # ***********************************************
 
 # File paths

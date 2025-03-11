@@ -3,7 +3,7 @@
 # Description : Creates a calibration curve
 # Author      : Karolina Krystofova
 # Date        : 2025/02/25
-# Version     : 3.3.3
+# Version     : 3.3.4
 # ***********************************************
 
 # File paths
