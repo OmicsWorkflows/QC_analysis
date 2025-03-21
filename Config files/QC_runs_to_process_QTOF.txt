@@ -27,6 +27,7 @@ QC PEPTIDES
 analyze QC peptides (Y/N): Y
 reprocess QC peptide data (Y/N): N
 identify QC peptides (Y/N): N
+m/z tolerance: 0.015
 
 PLOT SETTINGS
 max columns: 2

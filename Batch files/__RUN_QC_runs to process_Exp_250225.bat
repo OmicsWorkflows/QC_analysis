@@ -12,7 +12,7 @@ for /f "tokens=* delims= " %%c in ("!title!") do set "title=%%c"
 title !title!
 endlocal
 
-"D:\Desktop\QC analysis\src\R-4.3.2\bin\Rscript.exe" "D:\Desktop\QC analysis\src\QC scripts\Version 3.3.5\Scripts\QC_analysis_3.3.5.R" "D:\Desktop\QC analysis\" "D:\Desktop\QC analysis\QC_runs_to_process_Exp.txt" "D:\Desktop\QC analysis\src\QC scripts\Version 3.3.5\Functions\\" ""
+"D:\Desktop\QC analysis\src\R-4.3.2\bin\Rscript.exe" "D:\Desktop\QC analysis\src\QC scripts\Version 3.3.6\Scripts\QC_analysis_3.3.6.R" "D:\Desktop\QC analysis\" "D:\Desktop\QC analysis\QC_runs_to_process_Exp.txt" "D:\Desktop\QC analysis\src\QC scripts\Version 3.3.6\Functions\\" ""
 
 if exist "Rplots.pdf" del Rplots.pdf
 
