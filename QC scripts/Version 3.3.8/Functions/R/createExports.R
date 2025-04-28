@@ -107,7 +107,7 @@ createTmpDirectory <- function(batch.name = opts$file.batch, output = opts$file.
   dir_name <- ifelse(tag.bool, paste(batch.name, tag, sep = '_'), batch.name)
   dir_name <- removeDoubleUnderscore(dir_name)
   dir_name <- gsub('?', 'x', dir_name, fixed = TRUE)
-  dir_name <- gsub('x', 'x', dir_name, fixed = TRUE)
+  dir_name <- gsub('*', 'x', dir_name, fixed = TRUE)
   
   if(substr(dir_name, nchar(dir_name), nchar(dir_name))=='_') {
     dir_name <- substr(dir_name, 1, (nchar(dir_name)-1))
@@ -145,7 +145,7 @@ replaceTmpFolder <- function(tmp.folder = opts$sample.dir, batch.name = opts$fil
   dir_name <- ifelse(tag.bool, paste(batch.name, tag, sep = '_'), batch.name)
   dir_name <- removeDoubleUnderscore(dir_name)
   dir_name <- gsub('?', 'x', dir_name, fixed = TRUE)
-  dir_name <- gsub('x', 'x', dir_name, fixed = TRUE)
+  dir_name <- gsub('*', 'x', dir_name, fixed = TRUE)
   
   if(substr(dir_name, nchar(dir_name), nchar(dir_name))=='_') {
     dir_name <- substr(dir_name, 1, (nchar(dir_name)-1))
