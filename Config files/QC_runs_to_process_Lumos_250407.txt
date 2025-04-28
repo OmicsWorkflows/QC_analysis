@@ -17,6 +17,7 @@ wait time between loops (min): Inf		# put Inf for no looping
 time offset (min): 0
 MS levels: MS = ms, MS2 = ms2
 date format: %Y-%m-%d %H:%M:%S
+open .html report automatically (Y/N): N	# will be opened after last loop iteration
 
 CALIBRATION # unless you want to use a specific calibration tag, leave at 'default'
 use calibration (Y/N): N
@@ -34,3 +35,4 @@ max columns: 2
 max samples in overlay plot: 8
 max samples in bar plots: 50
 TIC fluctuation threshold: 10
+correlation matrix center: 0

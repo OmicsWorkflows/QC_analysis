@@ -2,7 +2,7 @@ FILE INFORMATION
 batch name: 
 file format: .csv
 prefix to remove: 
-suffix to remove: ???_1_*
+suffix to remove: _*_1_*
 
 FILE LOCATIONS
 input: ""
@@ -17,6 +17,7 @@ wait time between loops (min): 10 		# put Inf for no looping
 time offset (min): 5
 MS levels: MS = 1, MS2 = 2
 date format: "%d. %m. %Y %H:%M:%S"
+open .html report automatically (Y/N): N	# will be opened after last loop iteration
 
 CALIBRATION # unless you want to use a specific calibration tag, leave at 'default'
 use calibration (Y/N): N
@@ -34,3 +35,4 @@ max columns: 2
 max samples in overlay plot: 8
 max samples in bar plots: 50
 TIC fluctuation threshold: 10
+correlation matrix center: 0

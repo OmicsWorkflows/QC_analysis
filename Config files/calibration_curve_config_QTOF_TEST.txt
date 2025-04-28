@@ -1,0 +1,32 @@
+FILE LOCATIONS
+input: "D:\Data\2025\__mzMLs__\"
+output: "C:\Users\Admin\Desktop\Calibrations and QC analyses\calibrations\outputs\"
+calibration table: "C:\Users\Admin\Desktop\Calibrations and QC analyses\calibrations\outputs\calibrations.tsv"
+
+PROCESSING SETTINGS
+file format: .mzML
+date format: "%Y-%m-%dT%H:%M:%S"
+reprocess raw files (Y/N): Y
+
+INFO FOR CALIBRATION CURVE CALCULATION
+date: 250304
+method: 12IS
+tag: 250304_1_12IS_2
+TIC trace start: 3.3
+TIC trace end: 9
+formula: x^3 + x^2 + x
+include amounts: 000, 010, 020, 050, 100, 200 # by default: 000, 002, 005, 010, 020, 050, 100, 200
+
+PLOT SETTINGS
+prefix to remove: QC_cal
+suffix to remove: _1_???_01_*
+
+REAL AMOUNTS
+000: 0.1
+002: 2
+005: 5
+010: 10
+020: 20
+050: 50
+100: 100
+200: 200
