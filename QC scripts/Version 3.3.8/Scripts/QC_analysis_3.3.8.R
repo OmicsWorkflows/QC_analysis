@@ -354,7 +354,7 @@ tryCatch({
       say(paste0(opts$sample.dir, 'config.txt'), type = 'output')
 
       opts$sample.dir <- replaceTmpFolder()
-      opts$file.report <- paste0(opts$sample.dir, opts$file.batch, 
+      opts$file.report <- paste0(opts$sample.dir, removeSpecialCharacters(opts$file.batch), 
                                  ifelse(opts$calibration.bool, paste0('_', opts$calibration.tag), ''),
                                  '.html')
       concatLogs(opts$sample.dir, logfile, delete.original = FALSE)

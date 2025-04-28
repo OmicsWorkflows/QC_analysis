@@ -370,8 +370,7 @@ createHTMLreport <- function(header, title, img.table,
   } else {
     fn <- ifelse(cal, paste(opts$file.batch, opts$calibration.tag, sep = '_'), opts$file.batch)
     fn <- removeDoubleUnderscore(fn)
-    fn <- gsub('?', 'x', fn, fixed = TRUE)
-    fn <- gsub('*', 'x', fn, fixed = TRUE)
+    fn <- removeSpecialCharacters(fn)
     fn <- paste0(output.dir, fn, '.html')
   }
   

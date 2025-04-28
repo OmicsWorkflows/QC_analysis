@@ -29,6 +29,13 @@ removeDoubleUnderscore <- function(x) {
   gsub('_+', '_', x, fixed = FALSE)
 }
 
+# Replace special characters
+removeSpecialCharacters <- function(x) {
+  x <- gsub('?', 'x', x, fixed = TRUE)
+  x <- gsub('*', 'x', x, fixed = TRUE)
+  return(x)
+}
+
 # Merge all data beyond second column
 twoColumns <- function(x) {temp <- unname(unlist(strsplit(x, ':')))
                             temp_df <- data.frame(variable = trimws(temp[1]), 
