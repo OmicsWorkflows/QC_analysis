@@ -1,0 +1,39 @@
+FILE INFORMATION
+batch name: 
+file format: .csv
+prefix to remove: 
+suffix to remove: _01_?????
+
+FILE LOCATIONS
+input: "D:\Data\2025\__mzMLs__\"
+output: "C:\Users\Admin\Desktop\Calibrations and QC analyses\QC analyses\outputs\"
+calibration output: "C:\Users\Admin\Desktop\Calibrations and QC analyses\calibrations\outputs\"
+QC reference matrix: "C:\Users\Admin\Desktop\Calibrations and QC analyses\QC analyses\inputs\reference_matrix.csv"
+
+PROCESSING SETTINGS
+reprocess raw files (Y/N): N
+overwrite existing outputs (Y/N): Y
+wait time between loops (min): 10		# put Inf for no looping
+time offset (min): 1
+file limit: 0					# leave at 0 to include all files 
+MS levels: MS, MS2
+date format: "%Y-%m-%dT%H:%M:%S"
+open .html report automatically (Y/N): Y	# will be opened after last loop iteration
+
+CALIBRATION # unless you want to use a specific calibration tag, leave at 'default'
+use calibration (Y/N): Y
+tag: default
+method: default
+
+QC PEPTIDES
+analyze QC peptides (Y/N): Y
+reprocess QC peptide data (Y/N): N
+identify QC peptides (Y/N): N
+m/z tolerance: 0.015
+
+PLOT SETTINGS
+max columns: 2
+max samples in overlay plot: 8
+max samples in bar plots: 50
+TIC fluctuation threshold: 10
+correlation matrix center: 0
