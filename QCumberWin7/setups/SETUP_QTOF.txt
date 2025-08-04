@@ -1,0 +1,8 @@
+RSCRIPTPATH = C:\Users\Admin\Desktop\Calibrations and QC analyses\src\R-4.3.2\bin\Rscript.exe
+PYTHONPATH = C:\Users\Admin\Desktop\Calibrations and QC analyses\src\Python-3.11\python.exe
+BROWSERPATH = C:\Program Files (x86)\Mozilla Firefox\firefox.exe
+SRCFOLDER = C:\Users\Admin\Desktop\Calibrations and QC analyses\src\QC scripts
+PATH = C:\Users\Admin\Desktop\Calibrations and QC analyses
+VERSION = 3.3.11
+DEFAULTCONFIG = C:\Users\Admin\Desktop\Calibrations and QC analyses\QC analyses\QC_runs_to_process_QTOF_250630.txt
+DEFAULTCALIBRATIONCONFIG = 

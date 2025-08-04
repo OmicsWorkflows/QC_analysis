@@ -1,0 +1,8 @@
+RSCRIPTPATH = E:\Desktop\QC_analysis\src\R-4.3.2\bin\Rscript.exe
+PYTHONPATH = E:\Desktop\QC_analysis\src\Python-3.11\python.exe
+BROWSERPATH = C:\Program Files\Mozilla Firefox\firefox.exe
+SRCFOLDER = E:\Desktop\QC_analysis\src\QC scripts
+PATH = E:\Desktop\QC_analysis
+VERSION = 3.3.11
+DEFAULTCONFIG = E:\Desktop\QC_analysis\QC_runs_to_process_TIMS_250630.txt
+DEFAULTCALIBRATIONCONFIG = 
