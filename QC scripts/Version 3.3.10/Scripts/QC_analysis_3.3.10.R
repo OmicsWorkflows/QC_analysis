@@ -1,0 +1,399 @@
+# ***********************************************
+# Title       : Sample injection calculation
+# Description : Calculates the injection volume
+#               based on previously acquired
+#               calibration curve
+# Author      : Karolina Krystofova
+# Date        : 2025/06/13
+# ***********************************************
+version <- '3.3.10'
+
+# File paths
+args <- commandArgs(trailingOnly=TRUE)
+
+current_dir <- gsub('\\', '/', args[1], fixed = TRUE)
+file_config <- gsub('\\', '/', args[2], fixed = TRUE)
+fcn_src <- gsub('\\', '/', args[3], fixed = TRUE)
+python_path <- gsub('\\', '/', args[4], fixed = TRUE)
+browser_path <- gsub('\\', '/', args[5], fixed = TRUE)
+
+file_fcn <- paste0(fcn_src, '/R/')
+
+# Time at the start of analysis
+time_start <- Sys.time()
+
+#------------------- ANALYSIS -------------------
+tryCatch({
+  source(paste0(file_fcn, 'console.R'))
+  
+  config_txt <- read.table(file_config, sep = '\n', blank.lines.skip = FALSE,
+                           strip.white = TRUE, fill = TRUE)
+  batch <- getBatchName(config_txt, 'batch name')
+  logfile <- paste0(current_dir, '/.', removeSpecialCharacters(batch), '_log.txt')
+  
+  if(file.exists(logfile)) {
+    cat('Cannot process batch ', batch, ', analysis already in progress\n', sep = '')
+    cat('If there is no analysis of this batch currently running, delete the file', logfile, 'and restart the analysis\n')
+    cat('Terminating . . .')
+    quit()
+  }
+  
+  # Opens relevant libraries
+  say(paste0('Started script QC_analysis_', version, '.R'))
+  say(paste('Processing batch', batch))
+
+#---------------- LOAD LIBRARIES ---------------
+  # Opens relevant libraries
+  for(f in list.files(file_fcn, full.names = TRUE)) {
+    source(f)
+  }
+  
+  for(l in libs) {
+    suppressWarnings(suppressMessages(library(l, character.only = TRUE, quietly = TRUE, 
+                             warn.conflicts = FALSE, verbose = FALSE), 
+                     classes = c('message', 'warning')))
+  }
+  
+  dyn.load(paste0(fcn_src, "/kbhit.dll"))
+  
+  say('Libraries loaded')
+  
+#----------------- CONFIGURATION ----------------
+  # Read config file and initiate startup variables
+  opts <- readConfig(config_txt)
+  opts$src <- fcn_src
+  opts$python <- python_path
+
+  # Output folder for TIC data
+  dirs <- createFolders(opts, ms.levels = names(opts$MS.levels))
+  opts <- modifyList(opts, dirs)
+
+#--------------- START CHECKING LOOP ------------
+  old_samples <- list()
+  repeat_bool <- TRUE
+
+  while(repeat_bool) {
+    # Create tables where info about images and errors are stored
+    img_tbl <- img_tbl_template
+    errors <- list()
+    
+    # Variable to be changed during the first pass
+    first_pass <- TRUE
+    
+    new_samples <- names(getSampleNames(opts$file.batch))
+    
+    if(length(setdiff(new_samples, old_samples)) > 0) {
+      say('Starting new processing')
+
+#------------------ MS LEVEL LOOP ---------------
+      for (m in names(opts$MS.levels)) {
+        msn <- opts$MS.levels[m]
+        
+        # Get pure sample names
+        samples <- getSampleNames(opts$file.batch)
+        
+        if(first_pass) {
+          say('Processing samples:')
+          for (s in names(samples)) say(s, type = 'sample')
+          
+          # Only during first pass, update list of processed samples
+          old_samples <- names(samples)
+        }
+    
+        say(paste0('Processing MS level ', m, ' [',
+                   which(opts$MS.levels == msn), '/', length(opts$MS.levels), ']'))
+    
+#----------------- CALCULATE TICS ---------------
+        out <- getTICandQC(samples, msn, opts)
+        
+        if(first_pass){
+          opts$sample.table <- data.frame(sample = arrange(out$tic.df, time) |> pull(sample) |> unique())
+          opts$sample.table$sample.adj <- plotAdjustNames(opts$sample.table$sample, opts$plot.prefix, opts$plot.suffix)
+        }
+        
+        # Which samples could not be processed?
+        samples.not.calc <- setdiff(names(samples), unique(out$tic.df$sample))
+        errors[[length(errors)+1]] <- samples.not.calc
+        names(errors)[length(errors)] <- paste(m, 'level')
+
+        if(opts$qc.bool & m == 'MS'){
+          qc.not.calc <- setdiff(names(samples), unique(out$qc.df$sample))
+          errors[[length(errors)+1]] <- qc.not.calc
+          names(errors)[length(errors)] <- 'QC data'
+          if(is.null(out$qc.df)) opts$qc.bool <- FALSE
+        }
+        
+        samples <- samples[!names(samples) %in% samples.not.calc]
+        if(length(samples) == 0) next
+        
+        opts$new.tic <- out$new.tic
+        
+        # Create a factor column out of the sample column
+        # Order levels based on datetime
+        out$tic.df <- arrange(out$tic.df, time, RT)
+        out$tic.df$sample <- factor(out$tic.df$sample, levels = unique(out$tic.df$sample))
+        
+        if(m == 'MS') {
+          opts$new.bpc <- out$new.bpc
+          out$bpc.df <- arrange(out$bpc.df, time, RT)
+          out$bpc.df$sample <- factor(out$bpc.df$sample, levels = unique(out$bpc.df$sample))
+          
+          if(!is.null(out$other.traces)) {
+            out$other.traces <- arrange(out$other.traces, time, RT)
+            out$other.traces$sample <- factor(out$other.traces$sample, levels = unique(out$other.traces$sample))
+          }
+        }
+  
+#------------- GET CALIBRATION TAG --------------
+        if(m == 'MS' & opts$calibration.bool & 
+           (all(!is.na(unique(out$tic.df$time))) | opts$calibration.tag.read != 'default')) {
+          say('Obtaining calibration curve information')
+          opts <- modifyList(opts, getCalibrationInfo(samples, out$tic.df, opts))
+          cal_img <- getCalibrationCurveInfo(opts)
+          if(!is.null(cal_img)) img_tbl[nrow(img_tbl)+1,] <- cal_img
+          say(paste('Calibration curve', opts$calibration.tag, 'used for further processing'))
+        } else if(m == 'MS' & opts$calibration.bool & any(is.na(unique(out$tic.df$time)))) {
+          say('Warning!')
+          say('Could not parse data time format or time information missing', type = 'warn')
+          say('Processing without calibration curve', type = 'warn')
+          opts$calibration.bool <- FALSE
+        }
+  
+#----------------- SAMPLE TABLE -----------------
+        if(first_pass) {
+          export_tbls <- createExportTables(out$tic.df, removed = samples.not.calc)
+          
+          if(opts$qc.bool & opts$qc.identify & length(nrow(out$qc.stats)) > 0) {
+            export_tbls$qc_tbl <- as.character(tableHTML(out$qc.stats, 
+                                                         rownames = FALSE, 
+                                                         border = 0))
+          }
+        }
+      
+#--------------- INJECTION AMOUNT ---------------
+        if(m == 'MS' & opts$calibration.bool) {
+          say(paste('Calculating injection amount based on calibration curve', opts$calibration.tag))
+          export_tbls <- modifyList(export_tbls,
+                                    calculateAUC(subset(out$tic.df, RT > opts$calibration.start & RT < opts$calibration.end), 
+                                                 remove.bg = TRUE, msn) |>
+            select(Sample, Value) |>
+            rename('AUC' = 'Value') |>
+            calculateInjection(equation = opts$calibration.equation, max = opts$calibration.max))
+          
+          out$cal.df <- addCalibrationForPlotting(out$tic.df, export_tbls$inject_tbl, opts)
+        }
+        
+#------------------ PLOT TICS -------------------
+        say('Generating individual TIC plots')
+      
+        # Create variables for plot creation
+        opts$plot.height <- (120*ceiling(length(samples)/opts$plot.max.columns)) + 100
+        opts$plot.width <- ifelse(length(samples) < opts$plot.max.columns,
+                                  500*length(samples), 
+                                  500*opts$plot.max.columns)
+        opts$plot.subtitle <- ifelse(opts$calibration.bool,
+                                     paste(opts$file.batch, '| calibration:', opts$calibration.tag, '| level:', m), 
+                                     paste(opts$file.batch, '| levels:', m))
+        
+        img_tbl[nrow(img_tbl)+1,] <- plotChromatogramSingle(out$tic.df, 'RT', 'intensity', cr.type = 'TIC', type = 'free', opts, 
+                                                   start = opts$calibration.start, end = opts$calibration.end,
+                                                   colors = ticColors$colors[ticColors$type == 'TIC' & ticColors$level == m],
+                                                   filename = paste0(removeSpecialCharacters(opts$file.batch), '_', m, '_tic_freeY.png'))
+        img_tbl[nrow(img_tbl)+1,] <- plotChromatogramSingle(out$tic.df, 'RT', 'intensity', cr.type = 'TIC', type = 'fixed', opts,
+                                                   start = opts$calibration.start, end = opts$calibration.end, 
+                                                   colors = ticColors$colors[ticColors$type == 'TIC' & ticColors$level == m],
+                                                   filename = paste0(removeSpecialCharacters(opts$file.batch), '_', m, '_tic_fixedY.png'))
+        
+        if(m == 'MS' & opts$calibration.bool){
+          say('Generating TIC plots with calibration sample overlay')
+          img_tbl[nrow(img_tbl)+1,] <- plotTicCalibration(out$cal.df, 'RT', 'intensity', opts, 
+                                                     start = opts$calibration.start, end = opts$calibration.end,
+                                                     ticColors$colors[ticColors$type == 'TIC' & ticColors$level == m],
+                                                     filename = paste0(removeSpecialCharacters(opts$file.batch), '_', m, '_calibration_samples.png'))
+        }
+        
+        say('Generating overlay TIC plots')
+        img_tbl <- rbind(img_tbl, plotChromatogramOverlay(out$tic.df, 'RT', 'intensity', cr.type = 'TIC', start = opts$calibration.start,
+                                                          end = opts$calibration.end, chunk.no = opts$plot.max.samples))
+        say('TIC plots created')
+  
+#------------------- PLOT BPCS -------------------
+        if(m == 'MS') {
+          say('Generating individual BPC plots')
+          img_tbl[nrow(img_tbl)+1,] <- plotChromatogramSingle(out$bpc.df, 'RT', 'intensity', cr.type = 'BPC', type = 'free', opts,
+                                                              start = opts$calibration.start, end = opts$calibration.end,
+                                                              colors = ticColors$colors[ticColors$type == 'BPC'],
+                                                              filename = paste0(removeSpecialCharacters(opts$file.batch), '_', m, '_bpc_freeY.png'))
+          img_tbl[nrow(img_tbl)+1,] <- plotChromatogramSingle(out$bpc.df, 'RT', 'intensity', cr.type = 'BPC', type = 'fixed', opts,
+                                                              start = opts$calibration.start, end = opts$calibration.end,
+                                                              colors = ticColors$colors[ticColors$type == 'BPC'],
+                                                              filename = paste0(removeSpecialCharacters(opts$file.batch), '_', m, '_bpc_fixedY.png'))
+          
+          say('Generating overlay BPC plots')
+          img_tbl <- rbind(img_tbl, plotChromatogramOverlay(out$bpc.df, 'RT', 'intensity', cr.type = 'BPC', start = opts$calibration.start,
+                                                            end = opts$calibration.end, chunk.no = opts$plot.max.samples))
+          say('BPC plots created')
+        }
+  
+#--------------- PLOT OTHER TRACES -------------
+        if(m == 'MS' & opts$qc.bool) {
+          opts <- modifyList(opts, initiateQcPlotVariables(out$qc.df, by = 'QC'))
+          
+          qc.output <- plotQc(out$qc.df, opts, by = 'QC')
+          
+          opts$new.qc <- out$new.qc
+          qc.output$plot$width <- opts$plot.width
+          out$qc.stats <- qc.output$qc.stats
+          
+          img_tbl <- rbind(img_tbl, qc.output$plot)
+        }
+        
+        if(m == 'MS' & !is.null(out$other.traces)) {
+          for(t in unique(out$other.traces$type)) {
+            say(paste('Generating plots for', t, 'traces'))
+            img_tbl[nrow(img_tbl)+1,] <- plotLCtraces(out$other.traces, t, opts$file.batch, opts)
+          }
+          
+          say('Plots for additional traces generated')
+        }
+            
+#------------------ QC METRICS ------------------
+        # AUC
+        export_tbls$sums_tbl <- rbind(export_tbls$sums_tbl, calculateAUC(out$tic.df, remove.bg = FALSE, m))
+        
+        say('Generating AUC plots')
+        img_tbl[nrow(img_tbl)+1,] <- export_tbls$sums_tbl |>
+          dplyr::filter(Metric == 'AUC', Level == m) |>
+          plotAUC('Sample', 'Value')
+      
+        # TIC fluctuations
+        if(m == 'MS') {
+          say('Generating TIC fluctuation plot')
+          df_fluc <- ticFluc(out$tic.df, cutoff = opts$plot.fluctuation.threshold)
+          df_fluc$data$sample <- factor(df_fluc$data$sample, levels = levels(out$tic.df$sample))
+          export_tbls$sums_tbl <- rbind(export_tbls$sums_tbl, df_fluc$export)
+          
+          img_tbl[nrow(img_tbl)+1,] <- plotFluctuations(df_fluc$data, limits = opts$plot.fluctuation.threshold)
+    
+        # Correlation matrix
+          say('Generating sample correlation plots')
+          img_tbl[nrow(img_tbl)+1,] <- plotCorrelationMatrix(out$tic.df, 'RT', 'intensity')
+          img_tbl[nrow(img_tbl)+1,] <- plotCorrelationMatrix(out$tic.df, 'RT', 'intensity',
+                                                             scale.center = opts$plot.corr.center)
+        }
+        
+        say('QC metrics plots created')
+        if(first_pass) first_pass <- FALSE
+      }
+    
+#----------------- SAMPLE PLOTS -----------------
+      sample_plots <- tibble::tibble(sample = character(),
+                                     plot = list(),
+                                     width = numeric(),
+                                     height = numeric())
+      samples <- export_tbls$samples_tbl$Sample
+      
+      say('Generating individual sample plots for sample:')
+      
+      for (s in samples) {
+        say(s, type = 'sample')
+        
+        dfs <- getSampleData(as.character(s), opts)
+        
+        if(!is.null(dfs)) {
+          tmp <- plotSampleData(s, dfs, opts)
+          sample_plots[nrow(sample_plots)+1,] <- tmp
+          img_tbl[nrow(img_tbl)+1,] <- tibble(name = s, link = s, plot = tmp$plot, filename = paste0(s, '.png'),
+                                              width = tmp$width, height = tmp$height, type = 'Individual samples',
+                                              level = 'Individual samples', full.path = NA, include.in.report = FALSE)
+        }
+      }
+      
+      img_tbl <- rbind(img_tbl, createJoinedSamplePlots(sample_plots, opts))
+      say('Plots for individual samples created')
+    
+#------------ CREATE TMP EXPORT DIRS ------------
+      opts <- modifyList(opts, createTmpDirectory())
+      #opts <- modifyList(opts, createExportDirectory(removeSpecialCharacters(opts$file.batch)))
+    
+#-------------- SAVE CREATED PLOTS --------------
+      img_tbl$filename <- removeDoubleUnderscore(img_tbl$filename)
+      say('Saving plots')
+      img_tbl <- saveCreatedPlots(img_tbl)
+    
+#----------------- HTML OUTPUT ------------------
+      # Rename colnames in sums
+      export_tbls$sums_tbl <- export_tbls$sums_tbl |>
+        spread(key = Level, value = Value)
+      
+      # Create HTML ouput
+      cal_header <- ifelse(opts$calibration.bool,
+                           paste0('<br><b>Calibration curve:</b> ', opts$calibration.tag, '\n'), '')
+      say('Generating HTML output')
+      opts$file.report <- createHTMLreport(header = paste0('<b>Sample batch:</b> ', opts$file.batch, '\n', cal_header,'<br>', 
+                                         '<b>Script version:</b> ', version, '<br>'), 
+                                          title = 'QC sample analysis', img.table = subset(img_tbl, include.in.report),
+                                          export.tables = export_tbls, output.dir = opts$sample.dir,
+                                          qc = (opts$qc.bool & opts$qc.identify), cal = opts$calibration.bool,
+                                          error.list = errors)
+      
+      # Remove files that have been created only as an intermediate step
+      invisible(file.remove(list.files(opts$plots.dir, pattern = "^REMOVE_", full.names = TRUE)))
+  
+#------------------ TSV OUTPUT ------------------
+      if(opts$calibration.bool) {
+        say('Generating table output')
+        saveExportTable(export_tbls$inject_tbl, cal.tag = opts$calibration.tag)
+      }
+      
+      # Save processing info
+      say('Processing info saved as:')
+      write.table(opts$config, file = paste0(opts$sample.dir, 'config.txt'), quote = FALSE,
+                  col.names = FALSE, row.names = FALSE)
+      say(paste0(opts$sample.dir, 'config.txt'), type = 'output')
+
+      opts$sample.dir <- replaceTmpFolder()
+      opts$file.report <- paste0(opts$sample.dir, removeSpecialCharacters(opts$file.batch), 
+                                 ifelse(opts$calibration.bool, paste0('_', opts$calibration.tag), ''),
+                                 '.html')
+      concatLogs(opts$sample.dir, logfile, delete.original = FALSE)
+      
+      # Reset large variables
+      out <- NULL
+      img_tbl <- NULL
+      
+    } else {
+      if(!is.na(opts$file.wait.time)) {
+        say(paste('No new files to process found, trying again in', opts$file.wait.time, 'minutes or press any key to cancel'))
+        
+        # Wait for a given amount of time, unless a key is pressed
+        for(i in 1:(opts$file.wait.time * 60)) {
+          if(kbhit()==0) {
+            Sys.sleep(1)
+          } else {
+            repeat_bool <- FALSE
+            break
+          }
+        }
+      } else {
+        repeat_bool <- FALSE
+      }
+    }
+  } 
+},
+
+error = function(err) {
+  e(err)
+  quit()
+})
+
+diff <- Sys.time() - time_start
+
+say(paste('Done!', opts$new.tic, 'new sample data and', opts$new.qc, 
+          'new QC peptide data processed in', round(as.numeric(diff), 2), units(diff), '\n'))
+
+# Move log info to main log
+concatLogs(paste0(current_dir, '/'), logfile)
+
+if(opts$open.report) { browseURL(paste0('file:///', opts$file.report)) }
+
