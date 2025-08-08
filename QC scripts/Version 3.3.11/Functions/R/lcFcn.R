@@ -59,8 +59,8 @@ plotLCtraces <- function(d, t, current.batch, opts) {
     # Get plot size
     height <- sum(subplots$height) + 100
     width <- ifelse(length(unique(tmp2$sample)) < opts$plot.max.columns,
-              500*length(unique(tmp2$sample)), 
-              500*opts$plot.max.columns)
+                    opts$single.plot.width*length(unique(tmp2$sample)), 
+                    opts$single.plot.width*opts$plot.max.columns)
     
     p_final <- subplots |>
       ggplot(aes(x = column, y = row)) +
@@ -92,8 +92,8 @@ plotLCtraces <- function(d, t, current.batch, opts) {
     # Get plot size
     height <- (120*ceiling(length(unique(tmp$sample))/opts$plot.max.columns)) + 100
     width <- ifelse(length(unique(tmp$sample)) < opts$plot.max.columns,
-                    500*length(unique(tmp$sample)), 
-                    500*opts$plot.max.columns)
+                    opts$single.plot.width*length(unique(tmp$sample)), 
+                    opts$single.plot.width*opts$plot.max.columns)
   }
   
   tab <- tibble(name = t,

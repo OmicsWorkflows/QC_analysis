@@ -578,7 +578,7 @@ plotChromatogramSingle <- function(d, x, y, cr.type, type, subtitle, title = 'Au
   return(tab)
 }
 
-plotChromatogramOverlaySingle <- function(d, type, subtitle, col, start, end, pos) {
+plotChromatogramOverlaySingle <- function(d, type, subtitle, col, start, end, pos, nrow = 1) {
   if(end != 0) {
     d.limit <- d |>
       dplyr::filter(x >= start & x <= end)
@@ -604,7 +604,7 @@ plotChromatogramOverlaySingle <- function(d, type, subtitle, col, start, end, po
   }
   
   plotChromatogramDefault(d, subtitle, paste('All', type, 'curves overlayed')) +
-    guides(color = guide_legend(byrow = TRUE, #ncol = ifelse(pos == 'right', 1, length(unique(d$sample))), 
+    guides(color = guide_legend(byrow = TRUE, nrow = 4, 
                                 title = 'Sample', override.aes = list(linewidth = 1))) +
     annotate('rect', xmin = start, xmax = end, ymin = -Inf, ymax = Inf,
              color = 'transparent', alpha = 0.15) +
@@ -614,7 +614,8 @@ plotChromatogramOverlaySingle <- function(d, type, subtitle, col, start, end, po
     theme(legend.position = pos,
           legend.title = element_blank(),
           legend.background = element_rect(color = 'black'),
-          legend.spacing.y = unit(0, "points"))
+          legend.spacing.y = unit(0, "points"),
+          legend.justification = c(0.5,0))
 }
 
 # Plot overlay of all TICs
@@ -649,7 +650,15 @@ plotChromatogramOverlay <- function(d, x, y, cr.type, start = 0, end = 0, chunk.
     sub <- ifelse(length(l) == 1, paste0(batch, sub_suffix), 
                   paste0(batch, ' [', i, '/', length(l), ']', sub_suffix))
     
-    p <- plotChromatogramOverlaySingle(tmp, cr.type, sub, colors, start, end, legend.pos)
+    # calculate optimal number of rows
+    levs <- unique(tmp$sample)
+    width <- opts$single.plot.width-20
+    chars <- nchar(as.character(levs))
+    wths <- chars*6 + 25
+    max.cols <- min(floor(width/wths))
+    nrow <- ceiling(length(levs)/max.cols)
+    
+    p <- plotChromatogramOverlaySingle(tmp, cr.type, sub, colors, start, end, legend.pos, nrow = nrow)
     
     # Note this plot in image table
     tab <- tibble(name = paste0(i, '/', length(l)),
@@ -657,7 +666,7 @@ plotChromatogramOverlay <- function(d, x, y, cr.type, start = 0, end = 0, chunk.
                   plot = list(p),
                   filename = path, 
                   width = width, 
-                  height = 500, 
+                  height = 500+(nrow*40), 
                   type = paste(cr.type, 'curves overlay'), 
                   level = names(ms),
                   full.path = NA,

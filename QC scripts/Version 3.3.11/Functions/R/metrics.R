@@ -211,9 +211,9 @@ plotAUC <- function(d, x, y,
   height <- 400 * length(unique(d$facet))
   
   if(length(unique(d$x)) > 25 & length(unique(d$x)) < tic.opts$plot.bar.max.samples) {
-    width <- 500 + 10*(max(table(d$facet))-25)
+    width <- opts$single.plot.width + 10*(max(table(d$facet))-25)
   } else {
-    width <- 500
+    width <- opts$single.plot.width
   }
   
   if(width > 1000) width <- 1000
@@ -302,15 +302,15 @@ plotCorrelationMatrix <- function(d, x, y, rt.decimals = 1, scale.center = 'Auto
           legend.position = 'bottom')
   
   if(length(colnames(d)) <= 15) {
-    width <- 500
-    height <- 500
+    width <- opts$single.plot.width
+    height <- opts$single.plot.width
   } else {
-    width <- 500 + 15 * (length(colnames(d)) - 15)
-    height <- 500 + 15 * (length(colnames(d)) - 15)
+    width <- opts$single.plot.width + 15 * (length(colnames(d)) - 15)
+    height <- opts$single.plot.width + 15 * (length(colnames(d)) - 15)
   }
   
-  if(width > 800) width <- 1000
-  if(height > 800) height <- 1000
+  if(width > 1000) width <- 1000
+  if(height > 1000) height <- 1000
   
   filename = paste0(removeSpecialCharacters(opts$file.batch), '_', ms.level, '_corr_', center.type, '.png')
   
