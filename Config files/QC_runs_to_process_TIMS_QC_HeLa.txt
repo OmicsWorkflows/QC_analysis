@@ -15,7 +15,7 @@ reprocess raw files (Y/N): N
 overwrite existing outputs (Y/N): Y
 wait time between loops (min): 10 		# put Inf for no looping
 max number of empty loops: Inf			# put Inf for no limit
-time offset (min): 5
+time offset (min): 1
 file limit: 16					# leave at 0 to include all files 
 MS levels: MS, MS2
 date format: %d. %m. %Y %H:%M:%S

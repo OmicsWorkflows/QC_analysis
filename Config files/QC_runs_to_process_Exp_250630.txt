@@ -14,7 +14,7 @@ PROCESSING SETTINGS
 reprocess raw files (Y/N): N
 overwrite existing outputs (Y/N): Y
 wait time between loops (min): 20 		# put Inf for no looping
-max number of empty loops: 99			# put Inf for no limit
+max number of empty loops: 144			# put Inf for no limit
 time offset (min): 5
 file limit: 0					# leave at 0 to include all files 
 MS levels: MS, MS2
@@ -33,7 +33,7 @@ identify QC peptides (Y/N): N
 m/z tolerance: 0.015
 
 PLOT SETTINGS
-plot width (px): 500
+plot width (px): 700
 max columns: 2
 max samples in overlay plot: 8
 max samples in bar plots: 50

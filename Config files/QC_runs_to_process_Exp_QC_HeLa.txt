@@ -33,7 +33,7 @@ identify QC peptides (Y/N): N
 m/z tolerance: 0.015
 
 PLOT SETTINGS
-plot width (px): 500
+plot width (px): 700
 max columns: 2
 max samples in overlay plot: 8
 max samples in bar plots: 120
