@@ -1,5 +1,5 @@
 FILE INFORMATION
-batch name: QC_Ultra_HeLa_200pg_D?A*_RSLC_2col-50min
+batch name: QC_Ultra_HeLa_200pg
 file format: .csv
 prefix to remove: QC_Ultra_HeLa_200pg_
 suffix to remove: _*_1_*
