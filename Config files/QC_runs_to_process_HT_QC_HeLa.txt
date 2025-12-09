@@ -1,5 +1,5 @@
 FILE INFORMATION
-batch name: QC_HT_HeLa_010ng_D?A_RSLC_2col-50min
+batch name: QC_HT_HeLa_010ng
 file format: .csv
 prefix to remove: QC_HT_HeLa_010ng_
 suffix to remove: _*_1_*
